@@ -27,6 +27,8 @@ public class IqraTest {
 		array[3] = "http://iqra.software/languages/sql/sql.html";  // SQL
 		array[4] = "http://iqra.software/languages/c/list/definitions.html";  // C# definitons
 		
+		//array[5] = "http://iqra.software/languages/c/list/definitions.html";  // C# definitons
+		
 		
 		for(int n=0; n<=7; n++){
 	    
