@@ -1,0 +1,33 @@
+#region Get row count of Excel*
+
+            string result = "";
+            string comments = "";
+            string testArea = "";            
+
+            // Gets the row and column count from the spreadsheet TestResult0
+            string fileName3 = @"D:\Product\IFX\AutomationTesting\TCorenm\testdata\TestResult1.xlsx";
+            excel.Application x2app = new excel.Application();
+            //excel.Workbook x1workbook = x1app.Workbooks.Open(@"D:\Product\IFX\AutomationTesting\TCore\testdata\TestResult.xlsx"); 
+            excel.Workbook x2workbook = x2app.Workbooks.Open(fileName3);
+            excel.Worksheet x2worksheet = x2workbook.Sheets[1];
+            //excel.Worksheet x2worksheet = x2workbook.Sheets[2];
+            excel.Range x2range = x2worksheet.UsedRange;
+            // Gets the row and column count from the spreadsheet
+            int rowCount1 = x2range.Rows.Count;
+            int colCount1 = x2range.Columns.Count;
+
+
+            Trace.WriteLine($"Rows count in Test Case Template ={rowCount1}");
+            string testDate1 = HomePage.date1;
+            Trace.WriteLine($"Test Date 1  ={testDate1}");
+
+            x2workbook.Close(true);
+            x2app.Quit();
+
+            // Delete all left over test result files except the first one
+            for (int d = 2; d < rowCount1; d++)
+            {
+                System.IO.File.Delete(@"D:\Product\IFX\AutomationTesting\TCore\testdata\TestResult" + d + ".xlsx");
+            }
+
+            #endregion
