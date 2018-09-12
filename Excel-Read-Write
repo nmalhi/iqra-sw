@@ -30,4 +30,139 @@
                 System.IO.File.Delete(@"D:\Product\IFX\AutomationTesting\TCore\testdata\TestResult" + d + ".xlsx");
             }
 
-            #endregion
+#endregion
+
+#region Read Excel*            
+            for (int i = 2; i <= rowCount1; i++)
+            {                
+                // i is test number to be run
+                // k is test Excel test file number        
+                int k = i - 1;
+                
+                string fileName1 = @"D:\Product\IFX\AutomationTesting\TCorenm\testdata\TestResult" + k + ".xlsx";                
+                //Trace.WriteLine($"Filename={fileName1}");                
+
+                excel.Application x1app = new excel.Application();
+                //excel.Workbook x1workbook = x1app.Workbooks.Open(@"D:\Product\IFX\AutomationTesting\TCore\testdata\TestResult.xlsx"); 
+                excel.Workbook x1workbook = x1app.Workbooks.Open(fileName1);
+                excel.Worksheet x1worksheet = x1workbook.Sheets[1];
+                excel.Range x1range = x1worksheet.UsedRange;
+                int rowCount = x1range.Rows.Count;
+                int colCount = x1range.Columns.Count;
+                //Trace.WriteLine($"Rows count in Test Case Template ={rowCount}");
+
+                //Read Excel File : [Col][Row]
+                string testCase = Convert.ToString(x1range.Cells[3][i].value2);
+                bool runMode = Convert.ToBoolean(x1range.Cells[6][i].value2);
+                string testResult = Convert.ToString(x1range.Cells[4][i].value2);
+                string previousTestDateTime = Convert.ToString(x1range.Cells[5][i].value2);
+                //Trace.WriteLine($"Run Mode ={runMode}");                             
+#endregion
+
+// Write Excel File for Not Run Test Case
+ #region Skip False Run Mode Tests*
+                if (!runMode || testResult == "Pass" || testResult == "No Data")
+                {
+                    // Write Excel File for Not Run Test Case
+                    string testNumberNR = i + " ";
+                    x1range.Cells[1][i].value = testNumberNR;
+                    //x1range.Cells[3][i].value = testCase;
+                    //string resultNR = testResult;
+                    x1range.Cells[4][i].value = testResult;
+                    //var todayDateTimeNR = DateTime.Now;
+                    //var testDateTimeNR = todayDateTimeNR.ToString("yyyy-MM-dd-T_HH-mm");
+                    //Trace.WriteLine($"Test Date Time ={testDateTimeNR}");
+                    x1range.Cells[5][i].value = previousTestDateTime;
+
+                    //    string rowDel = "A" + i;
+                    //    excel.Range x5range = x1worksheet.get_Range(rowDel,rowDel);
+                    //    // x1range.EntireRow.Delete(excel.XlDirection.xlUp);
+                    //    x5range.EntireRow.Delete(Type.Missing);
+
+                    string fileNameNR = @"D:\Product\IFX\AutomationTesting\TCore\testdata\TestResult" + i + ".xlsx";
+                    x1workbook.SaveAs(fileNameNR);
+                    x1workbook.Close(true);
+                    x1app.Quit();
+                    continue;
+                }
+   #endregion
+   
+ 
+ // Typical test case 
+   #region Home
+                    case "Home":                       
+                        
+                        try
+                        {
+                            HomePage.Home();
+                            clickOK = true;
+                        }
+
+                        catch
+                        {
+                            continue;
+                        }
+
+                        finally
+                        {
+                            if (clickOK)
+                            {
+                                result = "Pass";
+                                Trace.WriteLine($"Test Case Ran Was: = {testCase}");
+                                Trace.WriteLine($"Test Result: = {result}");
+                            }
+                            else
+                            {
+                                result = "Fail";
+                                Trace.WriteLine($"Test Case Ran Was: = {testCase}");
+                                Trace.WriteLine($"Test Result: = {result}");
+                                var todayDateTime1 = DateTime.Now;
+                                x1range.Cells[5][i].value = todayDateTime1;
+                                x1range.Cells[4][i].value = result;
+                                string fileNameResult = @"D:\Product\IFX\AutomationTesting\TCore\testdata\TestResult" + i + ".xlsx";
+                                x1workbook.SaveAs(fileNameResult);
+                                x1workbook.Close(true);
+                                x1app.Quit();
+                            }
+                        }
+                        break;
+
+  #endregion
+
+
+// Write Excel File           
+#region Write Excel
+                
+                // Write Excel File                
+                string testNumber = i + " ";
+
+                x1range.Cells[1][i].value = testNumber;                              
+                x1range.Cells[4][i].value = result;
+                var todayDateTime = DateTime.Now;
+                var testDateTime = todayDateTime.ToString("yyyy-MM-dd-T_HH-mm");               
+                x1range.Cells[5][i].value = todayDateTime;
+                //x1range.Cells[12][11].value = HomePage.date1;
+
+                // Save and Close file                
+                string fileName = @"D:\Product\IFX\AutomationTesting\TCore\testdata\TestResult" + i + ".xlsx";
+                
+                x1workbook.SaveAs(fileName);
+                x1workbook.Close(true);
+                x1app.Quit();               
+
+
+            }
+            // For Loop ends here
+
+           // Delete all test result files except the last one
+            for (int d = 1; d < rowCount1; d++)
+            {
+                System.IO.File.Delete(@"D:\Product\IFX\AutomationTesting\TCore\testdata\TestResult" + d + ".xlsx");
+            }
+
+            // Copy the last test file as TestResult1
+            string lastFileName = @"D:\Product\IFX\AutomationTesting\TCore\testdata\TestResult" + rowCount1 + ".xlsx";
+            string firstFileName = @"D:\Product\IFX\AutomationTesting\TCore\testdata\TestResult1.xlsx";
+            System.IO.File.Move(lastFileName, firstFileName);
+            
+  #endregion           
